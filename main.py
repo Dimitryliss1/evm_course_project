@@ -1,5 +1,5 @@
-from Modules import gui
+from Modules import GUI
 
 
 if __name__ == '__main__':
-    app = gui.GUI()
+    app = GUI.GUI()
