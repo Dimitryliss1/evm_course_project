@@ -76,7 +76,7 @@ class GUI(Tk):
         # Отрисовка графика и выведение его на экран.
         plt.plot(xs, ys)
         plt.grid()
-        plt.xlabel("Количество посчитанных операций")
-        plt.ylabel("Среднее количество тактов на операцию")
+        plt.xlabel("Количество обработанных команд")
+        plt.ylabel("Среднее количество тактов на команду")
         plt.title(f"p1 = {self.p1.get()}, n = {self.n.get()}, m = {self.m.get()}, p2 = {self.p2.get()}")
         plt.show()
