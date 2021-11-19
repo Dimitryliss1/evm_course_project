@@ -74,9 +74,19 @@ class GUI(Tk):
             ys[i] = ys[i] / xs[i]
 
         # Отрисовка графика и выведение его на экран.
+        plt.figure(1)
         plt.plot(xs, ys)
         plt.grid()
         plt.xlabel("Количество обработанных команд")
         plt.ylabel("Среднее количество тактов на команду")
         plt.title(f"p1 = {self.p1.get()}, n = {self.n.get()}, m = {self.m.get()}, p2 = {self.p2.get()}")
+
+        plt.figure(2)
+        plt.plot(xs, [x[1] for x in conv.set_points], 'b', label='Без конвейера')
+        plt.plot(xs, [x[2] for x in conv.set_points], 'g', label='С применением конвейера')
+        plt.legend()
+        plt.grid()
+        plt.title("Демонстрация эффективности применения конвейера")
+        plt.xlabel("Количество обработанных команд")
+        plt.ylabel("Количество тактов")
         plt.show()
