@@ -43,7 +43,6 @@ class GUI(Tk):
                          "P2 - вероятность, что текущая команда является командой первого типа", justify=CENTER).grid(row=4, column=0, columnspan=4)
         Button(self, text='Симулировать!', command=self.simulate).grid(row=5, column=0, columnspan=4)
 
-
     def simulate(self):
         if not self.p1.get() or not self.p2.get() or not self.m.get() or not self.n.get():
             messagebox.showerror("Ошибка", "Выберите значения каждого поля, пожалуйста")
@@ -52,7 +51,7 @@ class GUI(Tk):
         while conv.commands_processed != 1000:
             conv.process_one_tick()
         xs = [x[0] for x in conv.set_points]
-        ys = [x[1] for x in conv.set_points]
+        ys = [float(x[1]) for x in conv.set_points]
         for i in range(len(ys)):
             ys[i] = ys[i] / xs[i]
         plt.plot(xs, ys)
