@@ -13,7 +13,8 @@ class GUI(Tk):
     def __init__(self):
         super(GUI, self).__init__()
         self.title("Курсовая по ОЭВМ")
-        self.p1 = DoubleVar()
+
+        self.p1 = DoubleVar()   # Определение переменных, в которые будут записываться значения флажков
         self.n = IntVar()
         self.m = IntVar()
         self.p2 = DoubleVar()
@@ -21,6 +22,7 @@ class GUI(Tk):
         self.mainloop()
 
     def draw(self):
+        # Подпись, затем справа три флажка со своими значениями.
         Label(self, text="Выберите P1: ").grid(column=0, row=0, sticky=W)
         for cnt_col, i in enumerate([0.6, 0.8, 0.9]):
             Radiobutton(text=i, value=i, variable=self.p1).grid(row=0, column=cnt_col + 1, sticky=W)
@@ -37,23 +39,41 @@ class GUI(Tk):
         for cnt_col, i in enumerate([0.5, 0.7, 0.9]):
             Radiobutton(text=i, value=i, variable=self.p2).grid(row=3, column=cnt_col + 1, sticky=W)
 
+        # Подсказка пользователю
         Label(self, text="P1 - вероятность регистровой адресации для операнда\n"
                          "N - время обращения к памяти в тактах\n"
                          "M - время вычисления для команд второго типа\n"
-                         "P2 - вероятность, что текущая команда является командой первого типа", justify=CENTER).grid(row=4, column=0, columnspan=4)
+                         "P2 - вероятность, что текущая команда является командой первого типа", justify=CENTER)\
+            .grid(row=4, column=0, columnspan=4)
+
+        # Кнопка запуска симуляции
         Button(self, text='Симулировать!', command=self.simulate).grid(row=5, column=0, columnspan=4)
 
     def simulate(self):
+        """
+        Функция, формирующая конвейер с заданными условиями и выполняющая на нем тысячу команд.
+        В конце работы график отрисовывается и выводится на экран.
+        """
+
+        # Если хотя бы одно из полей не заполнено, выдать ошибку
         if not self.p1.get() or not self.p2.get() or not self.m.get() or not self.n.get():
             messagebox.showerror("Ошибка", "Выберите значения каждого поля, пожалуйста")
             return
+
+        # Инициализация конвейера
         conv = Conveyor.Conveyor(self.p1.get(), self.n.get(), self.m.get(), self.p2.get())
         while conv.commands_processed != 1000:
             conv.process_one_tick()
-        xs = [x[0] for x in conv.set_points]
+        xs = [x[0] for x in conv.set_points]    # Массив координат по оси X -- количество выполненных команд
+
+        # Массив координат по оси Y -- суммарное время всех n команд
         ys = [float(x[1]) for x in conv.set_points]
+
+        # Вычисление среднего арифметического времени для одной команды при условии n исполненных.
         for i in range(len(ys)):
             ys[i] = ys[i] / xs[i]
+
+        # Отрисовка графика и выведение его на экран.
         plt.plot(xs, ys)
         plt.grid()
         plt.xlabel("Количество посчитанных операций")
