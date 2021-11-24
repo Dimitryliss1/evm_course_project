@@ -12,7 +12,8 @@ class Conveyor:
     commands_processed: int
     time_for_all_commands: int
     ticks_processed: int
-    set_points: List[Tuple[int, int, int]]
+    time_for_commands_wo_idle: int
+    set_points: List[Tuple[int, int, int, int]]
     first_call: bool
 
     def __init__(self, p1, n, m, p2):
@@ -32,6 +33,7 @@ class Conveyor:
         self.ticks_processed = 0        # Количество обработанных тактов
         self.commands_processed = 0     # Количество обработанных команд
         self.time_for_all_commands = 0  # Сколько времени в сумме провели все команды на конвейере
+        self.time_for_commands_wo_idle = 0  # Сколько времени всего провели команды на конвейере без учета простоя
         self.set_points = []
         self.first_call = True
 
@@ -47,8 +49,9 @@ class Conveyor:
                 if res:     # Если команда готова к переходу
                     if step == "writing":   # Если запись завершилась, то обновляем статистику
                         self.time_for_all_commands += self.steps[step].timer
+                        self.time_for_commands_wo_idle += self.steps[step].timer - self.steps[step].idleTimer
                         self.commands_processed += 1
-                        self.set_points.append((self.commands_processed, self.time_for_all_commands, self.ticks_processed))
+                        self.set_points.append((self.commands_processed, self.time_for_all_commands, self.ticks_processed, self.time_for_commands_wo_idle))
                         self.steps[step] = None
                     else:
                         next_step = list(self.steps.keys()).index(step) + 1

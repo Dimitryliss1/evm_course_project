@@ -8,6 +8,7 @@ class Command:
     mem_access: int
     timer: int
     step_timer: int
+    idleTimer: int
     codeRead: bool
     codeDec: bool
     op1Read: bool
@@ -23,7 +24,7 @@ class Command:
         self.mem_access = mem_access    # Время доступа к памяти
         self.timer = 0                  # Время с момента поступления команды на конвейер
         self.step_timer = 0             # Время с момента поступления команды на текущую ступень конвейера
-
+        self.idleTimer = 0
         self.codeRead = False   # КОП прочитан
         self.codeDec = False    # КОП расшифрован
         self.op1Read = False    # Первый операнд прочитан
@@ -35,6 +36,8 @@ class Command:
         self.step_timer += 1
         self.timer += 1
         if step_name == "codeRead":
+            if self.codeRead:
+                self.idleTimer += 1
             if self.step_timer == self.mem_access:
                 if self.op1_type == 2:  # Если операнд использует косвенную операцию
                     self.op1Read = True
@@ -44,25 +47,34 @@ class Command:
             return self.codeRead    # True -- готов к переходу, False -- нет.
 
         if step_name == "deciphering":
+            if self.codeDec:
+                self.idleTimer += 1
             self.codeDec = True
             return self.codeDec
 
         if step_name == "opRead1":
+            if self.op1Read:
+                self.idleTimer += 1
             if self.op1Read or self.op1_type == 1 or self.step_timer == self.mem_access:
                 self.op1Read = True
             return self.op1Read
 
         if step_name == "opRead2":
+            if self.op2Read:
+                self.idleTimer += 1
             if self.op2Read or self.op2_type == 1 or self.step_timer == self.mem_access:
                 self.op2Read = True
             return self.op2Read
 
         if step_name == "computing":
+            if self.computed:
+                self.idleTimer += 1
             if self.step_timer == self.comp_time:
                 self.computed = True
             return self.computed
 
         if step_name == "writing":
+            # Тут не надо обновлять idleTimer, поскольку по окончании записи команда сразу сбрасывается с конвейера
             if self.op2_type == 1:
                 self.written = True
             else:
