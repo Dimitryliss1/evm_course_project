@@ -4,7 +4,7 @@ from copy import deepcopy
 
 
 class Conveyor:
-    steps: dict[str, None or Command.Command]
+    steps: Dict[str, None or Command.Command]
     p2: float
     p1: float
     m: int
